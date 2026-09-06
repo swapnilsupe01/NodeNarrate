@@ -1,60 +1,71 @@
-# LangGraph Debugger 🔍
+# NodeNarrate 🔍
 
-Watch your LangGraph AI agent think, step by step — see exactly which node
-ran, what input it got, what it returned, and where it failed. No local
-setup needed: paste your code and run it right in the browser.
+See exactly how your LangGraph agent thinks, step by step — free,
+open-source, and self-hosted. No LangSmith account needed.
 
 ## Why
 
-LangGraph agents are normally a black box — you get the final answer with
-no visibility into how the agent got there. This tool captures every step
-in between and shows it as a simple, readable trace.
+LangGraph agents are normally a black box — you get the final answer
+with no visibility into how the agent got there. NodeNarrate captures
+every step (nodes, decisions, tool calls, LLM calls) and shows it in
+plain, readable form — built especially for people newer to LangGraph
+who need to *understand* what happened, not just see raw logs.
 
-## Try it
+## Project layout
 
-Paste code that defines a compiled graph as `graph` (and optionally
-`input_data` for the initial state), then click **Run & Debug**.
-
-```python
-from langgraph.graph import StateGraph, END
-from typing import TypedDict
-
-class State(TypedDict):
-    count: int
-
-def add_one(state: State) -> State:
-    return {"count": state["count"] + 1}
-
-builder = StateGraph(State)
-builder.add_node("add_one", add_one)
-builder.set_entry_point("add_one")
-builder.add_edge("add_one", END)
-
-graph = builder.compile()
-input_data = {"count": 0}
+```
+NodeNarrate/
+├── space/          # Hugging Face Space — Gradio demo, self-contained, zero install
+├── backend/        # FastAPI backend used by the React frontend
+├── frontend/       # React app — visual flow diagram + step viewer
+└── examples/       # Sample LangGraph agents to try
 ```
 
-## Run locally
+## Try the hosted demo
+
+👉 https://huggingface.co/spaces/swapnilsupe01/NodeNarrate
+
+## Run locally — Gradio Space version (fastest)
 
 ```bash
+cd space
 pip install -r requirements.txt
 python app.py
 ```
 
+## Run locally — full React + FastAPI version
+
+**Backend:**
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+**Frontend (separate terminal):**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Then open http://localhost:5173
+
 ## How it works
 
 - `core/tracer.py` — a LangChain callback handler that records every
-  node/tool/LLM call as it happens.
-- `core/sandbox_runner.py` — runs pasted code in a separate process with
-  a timeout and restricted imports, so it can't hang or harm the host.
-- `app.py` — the Gradio UI that ties it together.
+  node, decision, tool call, and LLM call as it happens.
+- `core/sandbox_runner.py` — runs pasted code in a separate process
+  with a timeout and restricted imports, so it can't hang or harm the host.
+- `backend/api/routes.py` — exposes the tracer/sandbox as a `POST /api/run` endpoint.
+- `frontend/src/components/FlowDiagram.jsx` — renders the execution path visually.
 
 ## Roadmap
 
-- [ ] Visual flow diagram (not just a step list)
-- [ ] `pip install langgraph-debugger` package for use in your own project
+- [ ] Distinguish conditional-edge decision points from regular nodes
+- [ ] Capture and display LangGraph checkpoints (save points)
+- [ ] `pip install nodenarrate` package for use in your own project
 - [ ] Webhook mode for tracing a live, remotely running agent
-- [ ] Regional-language (Marathi/Hindi) explanations for learners
+- [ ] Regional-language (Marathi/Hindi) plain-English explanations
 
 ## License
 
