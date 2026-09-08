@@ -100,7 +100,7 @@ Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 1. Create a new Space on **Hugging Face** and choose **Docker** as the SDK.
 2. Push this repository to your Hugging Face Space Git remote:
 ```bash
-git remote add space https://huggingface.co/spaces/<your-username>/NodeNarrate
+git remote add space https://huggingface.co/spaces/swapnilsupe01/NodeNarrate
 git push space main
 ```
 Hugging Face will automatically build the multi-stage `Dockerfile` and serve both the React frontend and FastAPI backend on port `7860`.
