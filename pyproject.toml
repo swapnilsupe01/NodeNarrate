@@ -33,3 +33,8 @@ dependencies = [
 Homepage = "https://github.com/swapnilsupe01/NodeNarrate"
 "Hugging Face Space" = "https://huggingface.co/spaces/swapnilsupe01/NodeNarrate"
 "Bug Tracker" = "https://github.com/swapnilsupe01/NodeNarrate/issues"
+
+[tool.setuptools.packages.find]
+include = ["nodenarrate*"]
+exclude = ["backend*", "frontend*", "space*", "examples*", "assets*"]
+
