@@ -6,7 +6,7 @@ colorTo: purple
 sdk: static
 pinned: true
 license: apache-2.0
-short_description: Visual step-by-step execution tracer and interactive debugger for LangGraph agents.
+short_description: Visual debugger & execution tracer for LangGraph.
 tags:
   - langgraph
   - langchain
