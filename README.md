@@ -6,6 +6,15 @@ colorTo: purple
 sdk: static
 pinned: true
 license: apache-2.0
+short_description: Visual step-by-step execution tracer and interactive debugger for LangGraph agents.
+tags:
+  - langgraph
+  - langchain
+  - agents
+  - debugger
+  - tracer
+  - visualization
+  - python
 ---
 
 # NodeNarrate 🔍
