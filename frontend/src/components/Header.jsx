@@ -41,7 +41,7 @@ export default function Header({ onExportTrace, onImportTrace, hasTrace }) {
         </div>
         <div className="brand-text">
           <div className="title-row">
-            <h1>NodeNarrate</h1>
+            <h1>LangGraph Visual Debugger</h1>
             <span className="version-pill">v0.1.0</span>
             <span className="space-pill">Hugging Face Space</span>
           </div>

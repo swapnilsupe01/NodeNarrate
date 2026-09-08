@@ -1,5 +1,5 @@
 ---
-title: NodeNarrate 🔍
+title: LangGraph Visual Debugger 🔍
 emoji: ⚡
 colorFrom: indigo
 colorTo: purple
@@ -17,7 +17,7 @@ tags:
   - python
 ---
 
-# NodeNarrate 🔍
+# LangGraph Visual Debugger 🔍
 > **See exactly how your LangGraph agent thinks, step by step — free, open-source, and self-hosted. No LangSmith account required.**
 
 [![PyPI Version](https://img.shields.io/pypi/v/nodenarrate.svg?color=blue)](https://pypi.org/project/nodenarrate/)
