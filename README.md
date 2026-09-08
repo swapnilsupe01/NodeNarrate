@@ -1,72 +1,136 @@
+---
+title: NodeNarrate 🔍
+emoji: ⚡
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: true
+license: apache-2.0
+---
+
 # NodeNarrate 🔍
+> **See exactly how your LangGraph agent thinks, step by step — free, open-source, and self-hosted. No LangSmith account required.**
 
-See exactly how your LangGraph agent thinks, step by step — free,
-open-source, and self-hosted. No LangSmith account needed.
+[![Python SDK](https://img.shields.io/badge/pip%20install-nodenarrate-blue.svg)](https://github.com/swapnilsupe01/NodeNarrate)
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces/swapnilsupe01/NodeNarrate)
+[![License](https://img.shields.io/badge/License-Apache%202.0-indigo.svg)](LICENSE)
 
-## Why
+---
 
-LangGraph agents are normally a black box — you get the final answer
-with no visibility into how the agent got there. NodeNarrate captures
-every step (nodes, decisions, tool calls, LLM calls) and shows it in
-plain, readable form — built especially for people newer to LangGraph
-who need to *understand* what happened, not just see raw logs.
+## ✨ Features
 
-## Project layout
+- 🐍 **`nodenarrate` Python SDK**: 2-line drop-in callback handler for any LangGraph agent in your local environment.
+- 🎨 **Visual Execution Studio**: Modern dark-mode web studio with interactive SVG flow diagrams, state diffs, and latency telemetry.
+- 📄 **Standalone HTML Reports**: Export self-contained, shareable HTML trace reports with zero external dependencies.
+- 🔒 **Safe Sandboxed Execution**: Runs pasted code in isolated subprocesses with import guards and execution timeouts.
+- 🐳 **Hugging Face Docker Space Ready**: Deploys the full FastAPI backend + React Vite frontend on Hugging Face's 100% free CPU tier.
 
-```
-NodeNarrate/
-├── space/          # Hugging Face Space — Gradio demo, self-contained, zero install
-├── backend/        # FastAPI backend used by the React frontend
-├── frontend/       # React app — visual flow diagram + step viewer
-└── examples/       # Sample LangGraph agents to try
-```
+---
 
-## Try the hosted demo
+## 🚀 1. Python SDK Usage (`pip install nodenarrate`)
 
-👉 https://huggingface.co/spaces/swapnilsupe01/NodeNarrate
-
-## Run locally — Gradio Space version (fastest)
+Install in your local environment:
 
 ```bash
-cd space
-pip install -r requirements.txt
-python app.py
+pip install nodenarrate
 ```
 
-## Run locally — full React + FastAPI version
+Add `NodeNarrateTracer` directly into your LangGraph invocation:
 
-**Backend:**
+```python
+from langgraph.graph import StateGraph, END
+from typing import TypedDict
+from nodenarrate import NodeNarrateTracer
+
+# 1. Initialize Tracer
+tracer = NodeNarrateTracer()
+
+# 2. Define your LangGraph agent
+class State(TypedDict):
+    count: int
+
+def step_node(state: State) -> State:
+    return {"count": state["count"] + 1}
+
+builder = StateGraph(State)
+builder.add_node("step_node", step_node)
+builder.set_entry_point("step_node")
+builder.add_edge("step_node", END)
+graph = builder.compile()
+
+# 3. Invoke with callback
+result = graph.invoke({"count": 0}, config={"callbacks": [tracer]})
+
+# 4. Export trace to JSON or standalone visual HTML
+tracer.export_html("trace.html")  # Open in any browser!
+tracer.export_json("trace.json")  # Load into NodeNarrate Web Studio
+```
+
+---
+
+## 🌐 2. Hosted Web Studio
+
+Try the live visual studio on Hugging Face Spaces:
+👉 **[https://huggingface.co/spaces/swapnilsupe01/NodeNarrate](https://huggingface.co/spaces/swapnilsupe01/NodeNarrate)**
+
+---
+
+## 🛠️ 3. Run Locally (Full Studio)
+
+### Backend (FastAPI):
 ```bash
 cd backend
 pip install -r requirements.txt
+pip install -e ..
 uvicorn main:app --reload --port 8000
 ```
 
-**Frontend (separate terminal):**
+### Frontend (React + Vite):
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Then open http://localhost:5173
+Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
-## How it works
+---
 
-- `core/tracer.py` — a LangChain callback handler that records every
-  node, decision, tool call, and LLM call as it happens.
-- `core/sandbox_runner.py` — runs pasted code in a separate process
-  with a timeout and restricted imports, so it can't hang or harm the host.
-- `backend/api/routes.py` — exposes the tracer/sandbox as a `POST /api/run` endpoint.
-- `frontend/src/components/FlowDiagram.jsx` — renders the execution path visually.
+## 🚢 4. Deploying to Hugging Face Spaces
 
-## Roadmap
+1. Create a new Space on **Hugging Face** and choose **Docker** as the SDK.
+2. Push this repository to your Hugging Face Space Git remote:
+```bash
+git remote add space https://huggingface.co/spaces/<your-username>/NodeNarrate
+git push space main
+```
+Hugging Face will automatically build the multi-stage `Dockerfile` and serve both the React frontend and FastAPI backend on port `7860`.
 
-- [ ] Distinguish conditional-edge decision points from regular nodes
-- [ ] Capture and display LangGraph checkpoints (save points)
-- [ ] `pip install nodenarrate` package for use in your own project
-- [ ] Webhook mode for tracing a live, remotely running agent
-- [ ] Regional-language (Marathi/Hindi) plain-English explanations
+---
 
-## License
+## 📂 Project Architecture
+
+```
+NodeNarrate/
+├── nodenarrate/          # Python SDK package (pip installable)
+│   ├── tracer.py         # LangGraph callback handler & trace engine
+│   ├── html_template.py  # Standalone HTML report generator
+│   └── __init__.py
+├── backend/              # FastAPI backend
+│   ├── api/routes.py     # Sandbox execution endpoint (/api/run)
+│   ├── core/             # Sandbox process runner
+│   └── main.py           # API & Static SPA server
+├── frontend/             # React + Vite studio interface
+│   ├── src/components/   # CodeEditor, FlowDiagram, TraceViewer, Header
+│   ├── src/templates.js  # Built-in LangGraph agent examples
+│   └── src/index.css     # Dark mode design system
+├── Dockerfile            # Hugging Face Spaces multi-stage container
+├── pyproject.toml        # Python packaging metadata
+└── README.md
+```
+
+---
+
+## 📜 License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
