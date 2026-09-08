@@ -11,7 +11,8 @@ license: apache-2.0
 # NodeNarrate 🔍
 > **See exactly how your LangGraph agent thinks, step by step — free, open-source, and self-hosted. No LangSmith account required.**
 
-[![Python SDK](https://img.shields.io/badge/pip%20install-nodenarrate-blue.svg)](https://github.com/swapnilsupe01/NodeNarrate)
+[![PyPI Version](https://img.shields.io/pypi/v/nodenarrate.svg?color=blue)](https://pypi.org/project/nodenarrate/)
+[![GitHub stars](https://img.shields.io/github/stars/swapnilsupe01/NodeNarrate?style=social)](https://github.com/swapnilsupe01/NodeNarrate)
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces/swapnilsupe01/NodeNarrate)
 [![License](https://img.shields.io/badge/License-Apache%202.0-indigo.svg)](LICENSE)
 
