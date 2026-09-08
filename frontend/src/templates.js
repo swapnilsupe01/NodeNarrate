@@ -127,4 +127,60 @@ graph = builder.compile()
 input_data = {"topic": "Autonomous Agents in 2026"}
 `,
   },
+  multiAgent: {
+    name: 'Self-Correcting Quality Loop',
+    description: 'Multi-node agent with quality score evaluation & retry loop',
+    code: `from langgraph.graph import StateGraph, END
+from typing import TypedDict, List
+
+class MultiAgentState(TypedDict):
+    query: str
+    category: str
+    research_notes: List[str]
+    iteration: int
+    quality_score: float
+    final_report: str
+
+def classifier_node(state: MultiAgentState) -> MultiAgentState:
+    query = state.get("query", "").lower()
+    cat = "ai_architecture" if "langgraph" in query or "agent" in query else "general"
+    return {
+        "category": cat,
+        "iteration": state.get("iteration", 0),
+        "research_notes": [f"Query categorized under: {cat}"],
+    }
+
+def research_node(state: MultiAgentState) -> MultiAgentState:
+    curr_iter = state.get("iteration", 0) + 1
+    notes = list(state.get("research_notes", []))
+    if curr_iter == 1:
+        notes.append(f"Pass {curr_iter}: Drafted initial findings.")
+        score = 0.70
+    else:
+        notes.append(f"Pass {curr_iter}: Completed deep factual verification.")
+        score = 0.96
+    return {"iteration": curr_iter, "research_notes": notes, "quality_score": score}
+
+def quality_router(state: MultiAgentState) -> str:
+    # Retry if quality score < 0.85 on pass 1
+    return "research" if state.get("quality_score", 0.0) < 0.85 and state.get("iteration", 0) < 2 else "synthesizer"
+
+def synthesizer_node(state: MultiAgentState) -> MultiAgentState:
+    report = f"✅ SUCCESS: Verified '{state.get('query')}' across {state.get('iteration')} iterations with quality {state.get('quality_score')*100}%."
+    return {"final_report": report}
+
+builder = StateGraph(MultiAgentState)
+builder.add_node("classifier", classifier_node)
+builder.add_node("research", research_node)
+builder.add_node("synthesizer", synthesizer_node)
+
+builder.set_entry_point("classifier")
+builder.add_edge("classifier", "research")
+builder.add_conditional_edges("research", quality_router)
+builder.add_edge("synthesizer", END)
+
+graph = builder.compile()
+input_data = {"query": "LangGraph Debugger in NodeNarrate", "iteration": 0, "research_notes": [], "quality_score": 0.0}
+`,
+  },
 }

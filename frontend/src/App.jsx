@@ -32,9 +32,10 @@ export default function App() {
       setTrace(capturedTrace)
 
       if (result.ok) {
+        const modeLabel = result.isSimulated ? ' (Static Browser Mode)' : ''
         setStatus({
           type: 'success',
-          message: `Run completed successfully — captured ${capturedTrace.length} execution step${capturedTrace.length !== 1 ? 's' : ''}.`,
+          message: `Run completed${modeLabel} — captured ${capturedTrace.length} execution step${capturedTrace.length !== 1 ? 's' : ''}.`,
         })
         if (capturedTrace.length > 0) {
           setActiveStepIndex(0)
