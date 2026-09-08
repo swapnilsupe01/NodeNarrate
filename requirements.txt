@@ -1,0 +1,7 @@
+# Core dependencies for NodeNarrate (SDK, Backend & Sandbox)
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+pydantic>=2.0.0
+langgraph>=0.0.10
+langchain>=0.1.0
+langchain-core>=0.1.0

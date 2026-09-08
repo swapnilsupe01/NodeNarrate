@@ -9,7 +9,14 @@ import os
 import time
 import traceback
 from typing import Any, Dict, List, Optional
-from langchain_core.callbacks.base import BaseCallbackHandler
+try:
+    # pyrefly: ignore [missing-import]
+    from langchain_core.callbacks.base import BaseCallbackHandler
+except ImportError:
+    class BaseCallbackHandler:  # type: ignore
+        """Fallback when langchain-core is not installed in the environment."""
+        pass
+
 from nodenarrate.html_template import generate_trace_html
 
 
